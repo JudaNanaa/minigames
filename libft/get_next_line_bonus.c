@@ -6,77 +6,87 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:31:37 by itahri            #+#    #+#             */
-/*   Updated: 2024/12/06 23:35:18 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/08 20:40:01 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
+#include "ft_printf/ft_printf.h"
 #include "libft.h"
+#include <stdbool.h>
 
-char	*ft_buff_to_all(char *all, char *buff)
+char	*ft_buff_to_all(t_gnl *data, char *buff, int nb_read)
 {
 	char	*str;
-	int		i;
 
-	i = ft_strlen_gnl(all, 1);
-	str = malloc(sizeof(char) * (i + ft_strlen_gnl(buff, 1) + 1));
+	str = malloc(sizeof(char) * (data->len_sortie[data->fd] + nb_read + 1));
 	if (!str)
-		return (free(all), NULL);
+		return (free(data->sortie), NULL);
 	str[0] = '\0';
-	ft_strcpy(str, all);
-	free(all);
-	ft_strcpy(&str[i], buff);
+	ft_strlcpy(str, data->sortie, data->len_sortie[data->fd]);
+	free(data->sortie);
+	ft_strlcpy(&str[data->len_sortie[data->fd]], buff, nb_read);
+	data->len_sortie[data->fd] += nb_read;
 	return (str);
 }
 
-char	*ft_read_file(int fd, char *sortie, char *buff)
+char	*ft_read_file(t_gnl *data, int fd)
 {
 	int	nb_read;
 
-	buff[0] = '\0';
+	data->stach[fd][0] = '\0';
+	if (ft_strchr(data->sortie, '\n'))
+		return (data->newline = true, data->len = find_nl(data->sortie), data->sortie);
 	nb_read = BUFFER_SIZE;
-	while (ft_check_if_newline(sortie) == false)
+	while (1)
 	{
-		nb_read = read(fd, buff, BUFFER_SIZE);
-		if (nb_read == -1)
-			return (free(sortie), NULL);
-		buff[nb_read] = '\0';
-		if (nb_read == 0)
-			return (sortie);
-		sortie = ft_buff_to_all(sortie, buff);
-		if (!sortie)
+		data->sortie = ft_realloc(data->sortie, BUFFER_SIZE);
+		if (data->sortie == NULL)
 			return (NULL);
+		nb_read = read(fd, &data->sortie[data->len_sortie[fd]], BUFFER_SIZE);
+		if (nb_read == -1)
+			return (free(data->sortie), NULL);
+		if (nb_read == 0)
+			return (data->newline = false, data->sortie);
+		data->len_sortie[fd] += nb_read;
+		data->sortie[data->len_sortie[fd]] = '\0';
+		if (ft_strchr(&data->sortie[data->len_sortie[fd] - nb_read], '\n'))
+		{
+			data->len = data->len_sortie[fd] - nb_read + find_nl(&data->sortie[data->len_sortie[fd] - nb_read]);
+			return (data->newline = true, data->sortie);
+		}
 	}
-	return (sortie);
+	data->newline = true;
+	return (data->sortie);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	stach[1010][BUFFER_SIZE + 1];
-	char		*sortie;
+	static t_gnl data;
 
 	if (fd < 0)
 		return (NULL);
-	sortie = malloc(sizeof(char) * (ft_strlen_gnl(stach[fd], 1) + 1));
-	if (!sortie)
-		return (stach[fd][0] = '\0', NULL);
-	sortie[0] = '\0';
-	ft_strcpy(sortie, stach[fd]);
-	sortie = ft_read_file(fd, sortie, stach[fd]);
-	if (!sortie)
-		return (stach[fd][0] = '\0', NULL);
-	if (ft_check_if_newline(sortie) == true)
+	data.sortie = ft_strdup(data.stach[fd]);
+	if (data.sortie == NULL)
+		return (data.stach[fd][0] = '\0', data.len_sortie[fd] = 0, NULL);
+	data.fd = fd;
+	data.sortie = ft_read_file(&data, fd);
+	if (data.sortie == NULL)
+		return (data.stach[fd][0] = '\0', data.len_sortie[fd] = 0, NULL);
+	if (data.newline == true)
 	{
-		ft_strcpy(stach[fd], &sortie[ft_strlen_gnl(sortie, 2)]);
-		sortie = ft_format_sortie(sortie);
+		ft_strlcpy(data.stach[fd], &data.sortie[data.len + 1], data.len_sortie[fd] - data.len + 1);
+		data.sortie[data.len + 1] = '\0';
+		data.len_sortie[fd] -= data.len + 1;
 	}
 	else
 	{
-		stach[fd][0] = '\0';
-		if (sortie[0] == '\0')
-			return (free(sortie), NULL);
+		data.stach[fd][0] = '\0';
+		data.len_sortie[fd] = 0;
+		if (data.sortie[0] == '\0')
+			return (free(data.sortie), NULL);
 	}
-	return (sortie);
+	return (data.sortie);
 }
 
 /*

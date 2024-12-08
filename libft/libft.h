@@ -6,7 +6,7 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 21:47:05 by marvin            #+#    #+#             */
-/*   Updated: 2024/12/07 00:19:46 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/08 15:36:26 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ char				**str2d_join(char **str1, char **str2);
 char				**re_str2djoin(char **str1, char **str2);
 char				**strdup2d(char **str);
 char				**ft_split(char *s, char *c);
+char				**add_string_char_2d(char **tab, char *str);
+char				**read_file_2d(int fd);
 
 char				*ft_itoa(int n);
 char				*ft_strcpy(char *dest, const char *src);

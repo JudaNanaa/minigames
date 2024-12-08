@@ -6,13 +6,74 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 23:05:03 by madamou           #+#    #+#             */
-/*   Updated: 2024/12/08 00:36:49 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/08 20:44:22 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/bsq.h"
 #include <fcntl.h>
 #include <stdbool.h>
+#include <unistd.h>
+
+int str_is_in_charset(char *str, char *set)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] != set[0] && str[i] != set[1])
+			return false;
+		++i;
+	}
+	return true;
+}
+
+void free_split_index(char **split, int index)
+{
+	if (split)
+	{
+		while (index >= 0)
+		{
+			free(split[index]);
+			--index;
+		}
+		free(split);
+	}
+}
+
+char	**read_file_2d_bsq(t_bsq *data, int fd)
+{
+	char	*temp;
+	char	**tab;
+	int		nb_lines;
+
+	tab = malloc(sizeof(char *) * data->nb_line + 1);
+	if (tab == NULL)
+		return (NULL);
+	nb_lines = 0;
+	data->len_line = -1;
+	tab[data->nb_line] = NULL;
+	ft_dprintf(2, "yes2\n");
+	while (true)
+	{
+		if (nb_lines > data->nb_line)
+			return (free_split(tab), NULL);
+		temp = get_next_line(fd);
+		if (temp == NULL)
+			break;
+		if (data->len_line == -1)
+			data->len_line = ft_strlen(temp) - 1;
+		if (temp[data->len_line] != '\n')
+			return (free_split_index(tab, nb_lines - 1), NULL);
+		temp[data->len_line] = '\0';
+		if (str_is_in_charset(temp, data->chars) == false)
+			return (free_split_index(tab, nb_lines - 1), NULL);
+		tab[nb_lines] = temp;
+		++nb_lines;
+	}
+	return (tab);
+}
 
 int set_infos(t_bsq *data, char *line)
 {
@@ -23,7 +84,7 @@ int set_infos(t_bsq *data, char *line)
 	{
 		data->nb_line *= 10;
 		data->nb_line += (line[i] - '0');
-		i++;
+		++i;
 	}
 	if (data->nb_line == 0 || ft_strlen(&line[i]) != 4)
 	{
@@ -35,40 +96,6 @@ int set_infos(t_bsq *data, char *line)
 	data->chars[FULL] = line[i];
 	free(line);
 	return 0;
-}
-
-int check_chars(char *line, char *chars)
-{
-	int i;
-	int length_line;
-	int row;
-
-	i = 0;
-	row = 0;
-	length_line = -1;
-	while (line[i])
-	{
-		if (line[i] == '\n')
-		{
-			if (length_line == -1)
-				length_line = row;
-			else if (length_line != row)
-			{
-				ft_printf("Error not sqare\n", line[i]);
-				return -1;
-			}
-			row = 0;
-		}
-		if (ft_is_in_charset(line[i], chars) == false && line[i] != '\n')
-		{
-			ft_printf("Error bad char '%c'\n", line[i]);
-			return -1;
-		}
-		if (line[i] != '\n')
-			row++;
-		i++;
-	}
-	return length_line;
 }
 
 int parsing_file(t_bsq *data, char *file)
@@ -86,33 +113,17 @@ int parsing_file(t_bsq *data, char *file)
 	if (line == NULL)
 	{
 		ft_printf("Error file empty\n");
-		return -1;
+		return (close(fd), -1);
 	}
 	if (set_infos(data, line) == -1)
-		return -1;
-	line = read_file(fd);
-	if (line == NULL)
-	{
-		ft_printf("Error malloc\n");
-		return -1;
-	}
-	data->len_line = check_chars(line, data->chars);
-	if (data->len_line == -1)
-	{
-		free(line);
-		return -1;
-	}
-	data->map = ft_split(line, "\n");
-	free(line);
+		return (close(fd), -1);
+	ft_dprintf(2, "yes1\n");
+	data->map = read_file_2d_bsq(data, fd);
+	ft_dprintf(2, "yes3\n");
+	close(fd);
 	if (data->map == NULL)
 	{
-		ft_printf("Error malloc\n");
-		return -1;
-	}
-	if (ft_strlen_2d(data->map) != data->nb_line)
-	{
-		ft_printf("Error nb_line file\n");
-		free_split(data->map);
+		ft_printf("Error map\n");
 		return -1;
 	}
 	return 0;

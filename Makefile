@@ -6,7 +6,7 @@
 #    By: madamou <madamou@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/29 12:42:35 by madamou           #+#    #+#              #
-#    Updated: 2024/12/08 03:02:22 by madamou          ###   ########.fr        #
+#    Updated: 2024/12/08 18:59:08 by madamou          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ END= 	$(shell tput -Txterm sgr0)
 
 CC = cc
 
-C_FLAGS = -Wall -Werror -Wextra -g3
+C_FLAGS = -Wall -Werror -Wextra -g3 -pg
 
 SRCS = main.c find.c parsing.c
 

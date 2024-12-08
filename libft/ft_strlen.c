@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibaby <ibaby@student.42.fr>                +#+  +:+       +#+        */
+/*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 15:06:46 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/11 23:46:53 by ibaby            ###   ########.fr       */
+/*   Updated: 2024/12/08 20:43:37 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ size_t	ft_strlen(const char *str)
 	if (!str)
 		return (0);
 	while (str[i])
-		i++;
+		++i;
 	return (i);
 }
 

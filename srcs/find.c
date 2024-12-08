@@ -6,36 +6,40 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 23:39:06 by madamou           #+#    #+#             */
-/*   Updated: 2024/12/08 14:41:18 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/08 21:07:54 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/bsq.h"
 #include <stdbool.h>
+#include <unistd.h>
 
 long get_size_sqare(t_bsq *data, long x, long y, long size)
 {
 	long save_x;
 	long save_y;
 
-	if (data->nb_line < y + size)
-		return size;
-	if (data->len_line < x + size)
-		return size;
-	save_x = x;
-	save_y = y;
-	while (y < save_y + size)
+	while (true)
 	{
-		x = save_x;
-		while (x < save_x + size)
+		if (data->nb_line < y + size || data->len_line < x + size)
+			return size - 1;
+		save_x = x;
+		save_y = y;
+		while (y < save_y + size)
 		{
-			if (data->map[y][x] != data->chars[EMPTY])
-				return size;
-			x++;
+			x = save_x;
+			while (x < save_x + size)
+			{
+				if (data->map[y][x] != data->chars[EMPTY])
+					return size - 1;
+				++x;
+			}
+			++y;
 		}
-		y++;
+		x = save_x;
+		y = save_y;
+		++size;
 	}
-	return get_size_sqare(data, save_x, save_y, size + 1);
 }
 
 void replace_chars(t_bsq *data)
@@ -50,9 +54,9 @@ void replace_chars(t_bsq *data)
 		while (x < data->index.x + data->size)
 		{
 			data->map[y][x] = data->chars[FULL];
-			x++;
+			++x;
 		}
-		y++;
+		++y;
 	}
 }
 
@@ -63,8 +67,9 @@ void print_map(t_bsq *data)
 	i = 0;
 	while (data->map[i])
 	{
-		ft_printf("%s\n", data->map[i]);
-		i++;
+		write(STDOUT_FILENO, data->map[i], data->len_line);
+		write(STDOUT_FILENO, "\n", 1);
+		++i;
 	}
 }
 
@@ -75,6 +80,7 @@ void find_biggest_sqare(t_bsq *data)
 	long size;
 
 	y = 0;
+	ft_dprintf(2, "debut chercher carre!\n");
 	while (y < data->nb_line - data->size)
 	{
 		x = 0;
@@ -82,7 +88,7 @@ void find_biggest_sqare(t_bsq *data)
 		{
 			if (data->map[y][x] == data->chars[EMPTY])
 			{
-				size = get_size_sqare(data, x, y, data->size - 1);
+				size = get_size_sqare(data, x, y, data->size);
 				if (size > data->size)
 				{
 					data->size = size;
@@ -90,8 +96,9 @@ void find_biggest_sqare(t_bsq *data)
 					data->index.y = y;
 				}
 			}
-			x++;
+			++x;
 		}
-		y++;
+		++y;
 	}
+	ft_dprintf(2, "fin chercher carre!\n");
 }
