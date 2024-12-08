@@ -6,7 +6,7 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 23:39:06 by madamou           #+#    #+#             */
-/*   Updated: 2024/12/08 14:23:35 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/08 14:41:18 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void find_biggest_sqare(t_bsq *data)
 		{
 			if (data->map[y][x] == data->chars[EMPTY])
 			{
-				size = get_size_sqare(data, x, y, data->size);
+				size = get_size_sqare(data, x, y, data->size - 1);
 				if (size > data->size)
 				{
 					data->size = size;
