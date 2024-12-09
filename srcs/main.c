@@ -6,7 +6,7 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 23:02:31 by madamou           #+#    #+#             */
-/*   Updated: 2024/12/08 16:19:40 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/09 01:49:46 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,21 @@ int main(int argc, char **argv)
 	}
 	if (parsing_file(&data, argv[1]) == -1)
 		return 1;
-	find_biggest_sqare(&data);
+	data.size = malloc(sizeof(int *) * data.nb_line);
+	if (data.size == NULL)
+	{
+		ft_printf("Error MALLOC\n");
+		return 1;
+	}
+	int i;
+	i = 0;
+	while (i < data.nb_line)
+	{
+		data.size[i] = malloc(sizeof(int *) * data.len_line);
+		++i;
+	}
+	if (find_biggest_sqare(&data) == -1)
+		return -1;
 	replace_chars(&data);
 	print_map(&data);
 	free_split(data.map);

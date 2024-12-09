@@ -6,7 +6,7 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 23:05:03 by madamou           #+#    #+#             */
-/*   Updated: 2024/12/08 20:44:22 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/09 01:26:09 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,12 @@ char	**read_file_2d_bsq(t_bsq *data, int fd)
 	char	**tab;
 	int		nb_lines;
 
-	tab = malloc(sizeof(char *) * data->nb_line + 1);
+	tab = malloc(sizeof(char *) * (data->nb_line + 1));
 	if (tab == NULL)
 		return (NULL);
 	nb_lines = 0;
 	data->len_line = -1;
 	tab[data->nb_line] = NULL;
-	ft_dprintf(2, "yes2\n");
 	while (true)
 	{
 		if (nb_lines > data->nb_line)
@@ -67,8 +66,6 @@ char	**read_file_2d_bsq(t_bsq *data, int fd)
 		if (temp[data->len_line] != '\n')
 			return (free_split_index(tab, nb_lines - 1), NULL);
 		temp[data->len_line] = '\0';
-		if (str_is_in_charset(temp, data->chars) == false)
-			return (free_split_index(tab, nb_lines - 1), NULL);
 		tab[nb_lines] = temp;
 		++nb_lines;
 	}
@@ -117,9 +114,7 @@ int parsing_file(t_bsq *data, char *file)
 	}
 	if (set_infos(data, line) == -1)
 		return (close(fd), -1);
-	ft_dprintf(2, "yes1\n");
 	data->map = read_file_2d_bsq(data, fd);
-	ft_dprintf(2, "yes3\n");
 	close(fd);
 	if (data->map == NULL)
 	{

@@ -6,7 +6,7 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:31:37 by itahri            #+#    #+#             */
-/*   Updated: 2024/12/08 20:40:01 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/08 21:52:30 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ char	*get_next_line(int fd)
 		return (data.stach[fd][0] = '\0', data.len_sortie[fd] = 0, NULL);
 	if (data.newline == true)
 	{
-		ft_strlcpy(data.stach[fd], &data.sortie[data.len + 1], data.len_sortie[fd] - data.len + 1);
+		ft_strlcpy(data.stach[fd], &data.sortie[data.len + 1], data.len_sortie[fd] - data.len);
 		data.sortie[data.len + 1] = '\0';
 		data.len_sortie[fd] -= data.len + 1;
 	}

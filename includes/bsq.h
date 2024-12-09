@@ -6,7 +6,7 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 23:01:40 by madamou           #+#    #+#             */
-/*   Updated: 2024/12/08 15:55:50 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/09 01:22:28 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ typedef enum s_chars
 
 typedef struct s_vec
 {
-	int x;
-	int y;
+	long x;
+	long y;
 }t_vec;
 
 typedef struct s_bsq
@@ -33,14 +33,16 @@ typedef struct s_bsq
 	int nb_line;
 	char chars[3];
 	char **map;
+	int **size;
 	int len_line;
 	t_vec index;
-	int size;
+	// int size;
+	bool increment;
 } t_bsq;
 
 int parsing_file(t_bsq *data, char *file);
 
-void find_biggest_sqare(t_bsq *data);
+int find_biggest_sqare(t_bsq *data);
 void replace_chars(t_bsq *data);
 void print_map(t_bsq *data);
 

@@ -6,7 +6,7 @@
 /*   By: madamou <madamou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/22 23:53:14 by madamou           #+#    #+#             */
-/*   Updated: 2024/12/08 19:52:57 by madamou          ###   ########.fr       */
+/*   Updated: 2024/12/08 21:51:39 by madamou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ size_t ft_strlcpy(char *dest, const char *src, size_t size)
 			i++;
 		}
 		i *= sizeof(size_t);
-		while (src[i] && i < size)
+		while (i < size && src[i])
 		{
 			dest[i] = src[i];
 			i++;
